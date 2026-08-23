@@ -28,8 +28,9 @@ LiaisonEleveEtablissement, Classe, Matiere, Note, Trimestre,
 MaquettePedagogique, PlanEtude, Ressource, RecommandationIA,
 EmploiDuTemps, Notification, Professeur, Parent.
 
-ÉTAPE ACTUELLE : [Phase 3 — Cœur élève autonome
-Étape 3.2 — Backend : Note et Trimestre]
+ÉTAPE ACTUELLE : [Phase 3 — Cœur élève autonome 
+Étape 3.1 — Backend : Classe et Matière
+]
 
 MÉTHODE :
 1. Si un point n'est pas clair, demande une précision avant de coder.
