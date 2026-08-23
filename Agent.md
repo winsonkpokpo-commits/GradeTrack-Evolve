@@ -45,7 +45,7 @@ manquait de ces éléments dès le départ — on ne reproduit pas ces erreurs) 
 5. Typage obligatoire : TypeScript strict côté frontend, type hints Python +
    Pydantic côté backend.
 
-PÉRIMÈTRE ACTUEL : Phase [Phase 1 — Cadrage (schéma de données)].
+PÉRIMÈTRE ACTUEL : Phase [Phase 2 — Fondations (auth + squelette multi-rôle)].
 Construis UNIQUEMENT ce que demande le prompt de phase fourni juste après ce
 message. Si tu identifies un besoin relevant d'une phase ultérieure,
 signale-le en une ligne à la fin de ta réponse au lieu de l'implémenter.
