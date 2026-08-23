@@ -1,0 +1,237 @@
+Project GradeTrack-Evolve {
+  database_type: 'PostgreSQL'
+  Note: '''
+    GradeTrack-Evolve — Phase 1 (Cadrage) : modèle de données.
+    Suivi des notes / progression académique, liaison temps réel élève ↔ établissement.
+    Row Level Security : un élève ne lit que ses données ; professeur et
+    admin_etablissement d'un établissement lié accèdent en LECTURE (jamais en
+    écriture directe sur les données personnelles hors notes/classes).
+  '''
+}
+
+enum role_utilisateur {
+  eleve
+  professeur
+  parent
+  admin_etablissement
+  admin_systeme
+}
+
+Table utilisateur {
+  id                uuid          [pk]
+  email             varchar       [unique, not null]
+  mot_de_passe_hash varchar
+  nom               varchar       [not null]
+  prenom            varchar       [not null]
+  photo_url         varchar
+  role              role_utilisateur [not null, note: 'eleve | professeur | parent | admin_etablissement | admin_systeme']
+  created_at        timestamp     [not null]
+  updated_at        timestamp     [not null]
+
+  Note: 'Profil applicatif ; id = auth.users.id (Supabase Auth).'
+}
+
+Table etablissement {
+  id                   uuid         [pk]
+  nom                  varchar      [not null]
+  type_etablissement   varchar      [not null, default: 'college']
+  adresse              varchar
+  ville                varchar      [not null]
+  code_postal          varchar
+  pays                 varchar      [not null, default: 'France']
+  telephone            varchar
+  email_contact        varchar
+  admin_utilisateur_id uuid         [ref: < utilisateur.id]
+  created_at           timestamp    [not null]
+  updated_at           timestamp    [not null]
+
+  Note: 'Établissement scolaire (primaire, collège, lycée, université).'
+}
+
+Table matiere {
+  id          uuid        [pk]
+  nom         varchar     [not null]
+  code        varchar     [unique]
+  description text
+  created_at  timestamp   [not null]
+  updated_at  timestamp   [not null]
+
+  Note: 'Référentiel global de matières.'
+}
+
+Table classe {
+  id               uuid        [pk]
+  etablissement_id uuid        [ref: > etablissement.id, not null]
+  nom              varchar     [not null]
+  niveau           varchar     [not null]
+  annee_scolaire   varchar
+  created_at       timestamp   [not null]
+  updated_at       timestamp   [not null]
+
+  Note: 'Classe d''un établissement.'
+}
+
+Table trimestre {
+  id          uuid      [pk]
+  classe_id   uuid      [ref: > classe.id, not null]
+  nom         varchar   [not null]
+  date_debut  date
+  date_fin    date
+  created_at  timestamp [not null]
+  updated_at  timestamp [not null]
+
+  Note: 'Période d''évaluation d''une classe.'
+}
+
+Table professeur {
+  id               uuid      [pk]
+  utilisateur_id   uuid      [ref: > utilisateur.id, not null]
+  etablissement_id uuid      [ref: > etablissement.id, not null]
+  matiere_id       uuid      [ref: > matiere.id]
+  specialite       varchar
+  created_at       timestamp [not null]
+  updated_at       timestamp [not null]
+
+  Note: 'Profil professeur, membre d''un établissement.'
+}
+
+Table eleve {
+  id              uuid      [pk]
+  utilisateur_id  uuid      [ref: > utilisateur.id, not null]
+  classe_id       uuid      [ref: > classe.id]
+  date_naissance  date
+  niveau          varchar
+  annee_entree    integer
+  created_at      timestamp [not null]
+  updated_at      timestamp [not null]
+
+  Note: 'Profil élève ; classe_id NULL si non lié.'
+}
+
+Table liaison_eleve_etablissement {
+  id               uuid     [pk]
+  eleve_id         uuid     [ref: > eleve.id, not null]
+  etablissement_id uuid     [ref: > etablissement.id, not null]
+  statut           varchar  [not null, default: 'actif']
+  date_debut       date     [not null]
+  date_fin         date
+  created_at       timestamp [not null]
+  updated_at       timestamp [not null]
+
+  Note: 'Lien réel élève ↔ établissement (source de l''accès lecture écoles).'
+}
+
+Table parent {
+  id              uuid      [pk]
+  utilisateur_id  uuid      [ref: > utilisateur.id, not null]
+  eleve_id        uuid      [ref: > eleve.id, not null]
+  lien            varchar   [note: 'pere | mere | tuteur | autre']
+  created_at      timestamp [not null]
+  updated_at      timestamp [not null]
+
+  Note: 'Profil parent/tuteur lié à un élève.'
+}
+Table note {
+  id                        uuid        [pk]
+  eleve_id                  uuid        [ref: > eleve.id, not null]
+  matiere_id                uuid        [ref: > matiere.id, not null]
+  trimestre_id              uuid        [ref: > trimestre.id]
+  valeur                    decimal(5,2) [not null, note: '0-20']
+  coefficient               decimal(3,2) [not null, default: 1]
+  date_evaluation           date        [not null]
+  type_evaluation           varchar     [not null, default: 'devoir']
+  commentaire               text
+  saisie_par_utilisateur_id uuid        [ref: > utilisateur.id]
+  created_at                timestamp   [not null]
+  updated_at                timestamp   [not null]
+
+  Note: 'Note d''un élève ; saisie par l''école, consultée par l''élève lié.'
+}
+
+Table maquette_pedagogique {
+  id               uuid      [pk]
+  etablissement_id uuid      [ref: > etablissement.id, not null]
+  classe_id        uuid      [ref: > classe.id]
+  matiere_id       uuid      [ref: > matiere.id]
+  annee_scolaire   varchar
+  coefficient      decimal(3,2) [not null, default: 1]
+  objectifs        text
+  created_at       timestamp [not null]
+  updated_at       timestamp [not null]
+
+  Note: 'Coefficients/objectifs pédagogiques par classe/matière.'
+}
+
+Table plan_etude {
+  id           uuid      [pk]
+  eleve_id     uuid      [ref: > eleve.id, not null]
+  titre        varchar   [not null]
+  type_periode varchar   [not null, note: 'journalier | hebdomadaire | mensuel | semestriel | personnalise']
+  date_debut   date      [not null]
+  date_fin     date
+  contenu      text
+  statut       varchar   [not null, default: 'actif']
+  created_at   timestamp [not null]
+  updated_at   timestamp [not null]
+
+  Note: 'Plan d''étude (IA/manuel) propre à un élève.'
+}
+
+Table ressource {
+  id          uuid      [pk]
+  titre       varchar   [not null]
+  url         varchar   [not null]
+  categorie   varchar   [note: 'programmation | ML | langues | ...']
+  description text
+  matiere_id  uuid      [ref: > matiere.id]
+  created_at  timestamp [not null]
+  updated_at  timestamp [not null]
+
+  Note: 'Ressource extrascolaire proposée aux élèves.'
+}
+
+Table recommandation_ia {
+  id               uuid      [pk]
+  eleve_id         uuid      [ref: > eleve.id, not null]
+  plan_etude_id    uuid      [ref: > plan_etude.id]
+  type             varchar   [not null, note: 'alerte | conseil | rappel | ressource']
+  titre            varchar
+  contenu          text      [not null]
+  priorite         varchar   [not null, default: 'normale']
+  statut           varchar   [not null, default: 'non_lue']
+  created_at       timestamp [not null]
+  updated_at       timestamp [not null]
+
+  Note: 'Recommandation / rappel généré, propre à un élève.'
+}
+
+Table emploi_du_temps {
+  id              uuid        [pk]
+  eleve_id        uuid        [ref: > eleve.id]
+  classe_id       uuid        [ref: > classe.id]
+  matiere_id      uuid        [ref: > matiere.id]
+  jour_semaine    smallint    [not null, note: '1-7, lundi→dimanche']
+  heure_debut     time        [not null]
+  heure_fin       time        [not null]
+  salle           varchar
+  created_at      timestamp   [not null]
+  updated_at      timestamp   [not null]
+
+  Note: 'Créneau d''emploi du temps (classe ou élève).'
+}
+
+Table notification {
+  id               uuid      [pk]
+  utilisateur_id   uuid      [ref: > utilisateur.id, not null]
+  titre            varchar
+  message          text      [not null]
+  type             varchar   [not null, default: 'info']
+  lue              boolean   [not null, default: false]
+  created_at       timestamp [not null]
+  updated_at       timestamp [not null]
+
+  Note: 'Notification destinée à un utilisateur.'
+}
+
+// Fin du modèle dbdiagram.io — les relations entre tables sont déclarées inline
+// ([ref: ...]) sur chaque colonne ; elles couvrent l'ensemble des clés étrangères.
