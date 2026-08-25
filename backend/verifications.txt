@@ -1,0 +1,68 @@
+=== tsc --noEmit (exit=2) ===
+lib/actions/auth.ts(84,7): error TS2353: Object literal may only specify known properties, and 'id' does not exist in type 'never[]'.
+lib/supabase/middleware.ts(29,16): error TS7006: Parameter 'cookiesToSet' implicitly has an 'any' type.
+lib/supabase/middleware.ts(30,35): error TS7031: Binding element 'name' implicitly has an 'any' type.
+lib/supabase/middleware.ts(30,41): error TS7031: Binding element 'value' implicitly has an 'any' type.
+lib/supabase/middleware.ts(32,35): error TS7031: Binding element 'name' implicitly has an 'any' type.
+lib/supabase/middleware.ts(32,41): error TS7031: Binding element 'value' implicitly has an 'any' type.
+lib/supabase/middleware.ts(32,48): error TS7031: Binding element 'options' implicitly has an 'any' type.
+lib/supabase/server.ts(21,16): error TS7006: Parameter 'cookiesToSet' implicitly has an 'any' type.
+lib/supabase/server.ts(23,37): error TS7031: Binding element 'name' implicitly has an 'any' type.
+lib/supabase/server.ts(23,43): error TS7031: Binding element 'value' implicitly has an 'any' type.
+lib/supabase/server.ts(23,50): error TS7031: Binding element 'options' implicitly has an 'any' type.
+
+
+
+=== pytest backend (exit=0) ===
+============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: c:\Users\HP\.vscode\GradeTrack-Evolve\backend
+plugins: anyio-4.14.2
+collecting ... collected 36 items
+
+tests/test_classe.py::test_eleve_consulte_sa_propre_classe PASSED        [  2%]
+tests/test_classe.py::test_eleve_a_sur_la_classe_de_l_eleve_b_403 PASSED [  5%]
+tests/test_classe.py::test_eleve_b_ne_peut_pas_consulter_la_classe_de_a PASSED [  8%]
+tests/test_classe.py::test_identifiant_non_uuid_422 PASSED               [ 11%]
+tests/test_classe.py::test_classe_sans_jeton_401 PASSED                  [ 13%]
+tests/test_classe.py::test_403_meme_si_la_classe_cible_n_existe_pas PASSED [ 16%]
+tests/test_classe.py::test_details_d_acces_exposent_le_contexte PASSED   [ 19%]
+tests/test_matiere.py::test_liste_complete_du_referentiel PASSED         [ 22%]
+tests/test_matiere.py::test_structure_des_champs_de_matiere PASSED       [ 25%]
+tests/test_matiere.py::test_le_referentiel_est_identique_pour_tout_utilisateur_authentifie PASSED [ 27%]
+tests/test_matiere.py::test_liste_matieres_sans_jeton_401 PASSED         [ 30%]
+tests/test_note.py::test_liste_ses_propres_notes PASSED                  [ 33%]
+tests/test_note.py::test_detail_d_une_note PASSED                        [ 36%]
+tests/test_note.py::test_note_de_l_eleve_b_consultee_par_a_403 PASSED    [ 38%]
+tests/test_note.py::test_note_inexistante_404 PASSED                     [ 41%]
+tests/test_note.py::test_creation_avec_trimestre_de_sa_classe PASSED     [ 44%]
+tests/test_note.py::test_creation_sans_trimestre_autorisee PASSED        [ 47%]
+tests/test_note.py::test_creation_matiere_inexistante_404 PASSED         [ 50%]
+tests/test_note.py::test_creation_trimestre_inexistant_404 PASSED        [ 52%]
+tests/test_note.py::test_creation_trimestre_d_une_autre_classe_403 PASSED [ 55%]
+tests/test_note.py::test_valeur_hors_plage_422 PASSED                    [ 58%]
+tests/test_note.py::test_type_evaluation_invalide_422 PASSED             [ 61%]
+tests/test_note.py::test_coefficient_negatif_422 PASSED                  [ 63%]
+tests/test_note.py::test_modification_partielle PASSED                   [ 66%]
+tests/test_note.py::test_detacher_le_trimestre_via_null_explicite PASSED [ 69%]
+tests/test_note.py::test_modifier_la_note_de_b_par_a_403 PASSED          [ 72%]
+tests/test_note.py::test_suppression_de_sa_note PASSED                   [ 75%]
+tests/test_note.py::test_supprimer_la_note_de_b_par_a_403 PASSED         [ 77%]
+tests/test_note.py::test_notes_sans_jeton_401 PASSED                     [ 80%]
+tests/test_trimestre.py::test_liste_des_trimestres_de_sa_classe PASSED   [ 83%]
+tests/test_trimestre.py::test_structure_des_champs PASSED                [ 86%]
+tests/test_trimestre.py::test_tri_chronologique PASSED                   [ 88%]
+tests/test_trimestre.py::test_eleve_b_ne_voit_que_sa_classe PASSED       [ 91%]
+tests/test_trimestre.py::test_eleve_sans_classe_liste_vide PASSED        [ 94%]
+tests/test_trimestre.py::test_trimestres_sans_jeton_401 PASSED           [ 97%]
+tests/test_trimestre.py::test_ecriture_non_exposee PASSED                [100%]
+
+============================== warnings summary ===============================
+..\..\..\AppData\Roaming\Python\Python314\site-packages\fastapi\testclient.py:1
+  C:\Users\HP\AppData\Roaming\Python\Python314\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 36 passed, 1 warning in 3.16s ========================
+
