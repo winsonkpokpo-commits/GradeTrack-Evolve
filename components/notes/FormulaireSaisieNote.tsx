@@ -9,6 +9,7 @@ import {
   fetchTrimestres,
   type MatiereOption,
   type TrimestreOption,
+  type TypeEvaluation,
 } from "@/lib/api/notes";
 
 /**
@@ -28,6 +29,10 @@ export function FormulaireSaisieNote() {
   const [matiereId, setMatiereId] = useState("");
   const [trimestreId, setTrimestreId] = useState("");
   const [valeur, setValeur] = useState("");
+  const [typeEvaluation, setTypeEvaluation] =
+    useState<TypeEvaluation>("devoir");
+  const [coefficient, setCoefficient] = useState("1");
+  const [commentaire, setCommentaire] = useState("");
 
   const [envoi, setEnvoi] = useState(false);
   const [erreurEnvoi, setErreurEnvoi] = useState<string | null>(null);
@@ -72,6 +77,9 @@ export function FormulaireSaisieNote() {
         matiereId,
         trimestreId: trimestreId === "" ? null : trimestreId,
         valeur: Number(valeur),
+        typeEvaluation,
+        coefficient: Number(coefficient),
+        commentaire: commentaire.trim() === "" ? null : commentaire,
       });
       setValeur("");
       setSucces(true);
@@ -176,6 +184,76 @@ export function FormulaireSaisieNote() {
         <p className="mt-1 text-xs text-slate-400">
           Les contrôles métier (échelle, droits) sont appliqués par le serveur.
         </p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label
+            htmlFor="note-type-evaluation"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            Type d'évaluation
+          </label>
+          <select
+            id="note-type-evaluation"
+            value={typeEvaluation}
+            onChange={(event) =>
+              setTypeEvaluation(event.target.value as TypeEvaluation)
+            }
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          >
+            {(
+              [
+                "devoir",
+                "controle",
+                "examen",
+                "tp",
+                "oral",
+                "autre",
+              ] as const
+            ).map((valeurType) => (
+              <option key={valeurType} value={valeurType}>
+                {valeurType}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label
+            htmlFor="note-coefficient"
+            className="mb-1 block text-sm font-medium text-slate-700"
+          >
+            Coefficient
+          </label>
+          <input
+            id="note-coefficient"
+            type="number"
+            inputMode="decimal"
+            step="0.5"
+            min="0.5"
+            value={coefficient}
+            onChange={(event) => setCoefficient(event.target.value)}
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label
+          htmlFor="note-commentaire"
+          className="mb-1 block text-sm font-medium text-slate-700"
+        >
+          Commentaire{" "}
+          <span className="font-normal text-slate-400">(optionnel)</span>
+        </label>
+        <textarea
+          id="note-commentaire"
+          value={commentaire}
+          onChange={(event) => setCommentaire(event.target.value)}
+          rows={3}
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        />
       </div>
 
       {erreurEnvoi ? (

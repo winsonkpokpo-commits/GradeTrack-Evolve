@@ -86,3 +86,18 @@ MODÈLE DE POSSESSION (double architecture B2C/B2B) :
 - Données personnelles (Note, PlanEtude, RecommandationIA,
   centres_interet) : toujours possédées et modifiables par l'élève
   lui-même, qu'il soit autonome (B2C) ou lié à un établissement (B2B).
+## Vérifications non exécutables
+Si les tests ou le typecheck ne peuvent pas être exécutés (terminal instable,
+erreur d'environnement), ne JAMAIS créer de script de contournement ni
+déclarer le travail "vérifié" sur la base d'une relecture statique seule.
+S'arrêter, signaler le blocage précisément, et attendre que l'utilisateur
+exécute lui-même les vérifications avant de considérer l'étape terminée.
+
+## Exceptions typées : la règle s'applique aussi en SQL
+La règle "jamais de except Exception générique" couvre également PL/pgSQL :
+jamais de `exception when others then null`. Utiliser un nom d'exception
+PostgreSQL précis (ex. duplicate_object, invalid_text_representation) ou
+laisser l'erreur remonter. Toute nouvelle table doit créer son propre
+trigger `trg_updated_at` explicitement — ne pas compter sur une boucle
+générique sur information_schema.tables (celle de 0001 ne s'applique
+qu'aux tables existant au moment de son exécution, pas aux tables futures).

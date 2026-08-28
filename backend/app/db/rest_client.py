@@ -6,6 +6,7 @@ contourne la sécurité, cf. règles non négociables du projet).
 """
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import httpx
@@ -13,6 +14,8 @@ import httpx
 from app.core.errors import UnauthorizedError, UpstreamError
 
 _TIMEOUT_SECONDS = 10.0
+
+_LOGGER = logging.getLogger("gradetrack.upstream")
 
 
 class SupabaseRestClient:
@@ -131,7 +134,13 @@ def _raise_for_status(response: httpx.Response, resource: str) -> None:
     """Traduit une erreur HTTP Supabase en erreur applicative typée."""
     if response.is_success:
         return
+    _LOGGER.error(
+        "Supabase a répondu %s pour la ressource « %s ». Corps : %s",
+        response.status_code,
+        resource,
+        response.text,
+    )
     raise UpstreamError(
         f"Supabase a répondu {response.status_code} pour la ressource « {resource} ».",
-        details={"body": response.text[:500]},
+        details={"status_code": response.status_code},
     )

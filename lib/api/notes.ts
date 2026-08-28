@@ -54,10 +54,21 @@ export type FiltresNotes = {
 };
 
 /** Données d'une nouvelle note saisies par l'utilisateur. */
+export type TypeEvaluation =
+  | "devoir"
+  | "controle"
+  | "examen"
+  | "tp"
+  | "oral"
+  | "autre";
+
 export type PayloadNouvelleNote = {
   matiereId: string;
   trimestreId: string | null;
   valeur: number;
+  typeEvaluation: TypeEvaluation;
+  coefficient: number;
+  commentaire: string | null;
 };
 
 
@@ -218,6 +229,9 @@ export async function creerNote(
       matiere_id: payload.matiereId,
       trimestre_id: payload.trimestreId,
       valeur: payload.valeur,
+      coefficient: payload.coefficient,
+      type_evaluation: payload.typeEvaluation,
+      commentaire: payload.commentaire,
     }),
   });
   return versNoteDetail(ligne);
