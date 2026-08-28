@@ -3,12 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { isUserRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
-/**
- * État renvoyé par une action d'authentification (connexion / inscription).
- */
 export type AuthState = {
   error: string | null;
   success?: string | null;
@@ -16,7 +12,6 @@ export type AuthState = {
 
 const initialState: AuthState = { error: null };
 
-/** Connexion : crée la session, puis redirige (le middleware route selon le rôle). */
 export async function login(
   _prev: AuthState,
   formData: FormData,
@@ -30,23 +25,23 @@ export async function login(
     return { error: "Email et mot de passe sont obligatoires." };
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     return { error: "Identifiants invalides. Veuillez réessayer." };
   }
 
   revalidatePath("/", "layout");
-  // La redirection de rôle est gérée par le middleware à partir de « / ».
   redirect("/");
 }
 
 /**
- * Inscription : crée le compte Supabase Auth avec le rôle choisi,
- * insère le profil `utilisateur`, puis route selon le rôle.
+ * Inscription : crée UNIQUEMENT des comptes « élève » (B2C autonome).
+ * Les rôles professeur / parent / admin_etablissement / admin_systeme ne
+ * sont jamais créés via ce formulaire public — ils seront provisionnés par
+ * des flux dédiés et contrôlés (Phase 7 / Phase 8). Le profil applicatif
+ * (utilisateur + eleve) est désormais créé automatiquement par le trigger
+ * SQL handle_new_user (migration 0002) : plus d'insert manuel ici.
  */
 export async function signup(
   _prev: AuthState,
@@ -58,43 +53,19 @@ export async function signup(
   const password = String(formData.get("password") ?? "");
   const nom = String(formData.get("nom") ?? "").trim();
   const prenom = String(formData.get("prenom") ?? "").trim();
-  const role = String(formData.get("role") ?? "");
 
   if (!email || !password || !nom || !prenom) {
     return { error: "Tous les champs sont obligatoires." };
-  }
-  if (!isUserRole(role)) {
-    return { error: "Rôle invalide." };
   }
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { role } },
+    options: { data: { nom, prenom, role: "eleve" } },
   });
 
   if (error) {
-    return { error: error.message };
-  }
-
-  // Si une session est immédiatement disponible (confirmation e-mail désactivée),
-  // on crée le profil applicatif `public.utilisateur` (même `id` que auth.users).
-  if (data.user && data.session) {
-    const { error: profileError } = await supabase.from("utilisateur").insert({
-      id: data.user.id,
-      email,
-      nom,
-      prenom,
-      role,
-    });
-
-    if (profileError) {
-      return {
-        error:
-          "Compte créé mais le profil applicatif n'a pas pu être initialisé : " +
-          profileError.message,
-      };
-    }
+    return { error: "Impossible de créer le compte. Réessayez ou contactez le support." };
   }
 
   revalidatePath("/", "layout");
@@ -103,7 +74,6 @@ export async function signup(
     redirect("/");
   }
 
-  // Confirmation e-mail activée : on prévient l'utilisateur (pas de session immédiate).
   return {
     ...initialState,
     success:
@@ -111,7 +81,6 @@ export async function signup(
   };
 }
 
-/** Déconnexion : détruit la session puis retourne sur la page de connexion. */
 export async function logout(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();

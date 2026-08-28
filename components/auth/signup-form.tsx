@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
-import { ROLE_LABELS, USER_ROLES } from "@/lib/auth";
 import { signup, type AuthState } from "@/lib/actions/auth";
 
 export function SignupForm() {
@@ -80,25 +79,6 @@ export function SignupForm() {
           required
           className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
-      </div>
-
-      <div>
-        <label htmlFor="role" className="mb-1 block text-sm font-medium text-slate-700">
-          Rôle
-        </label>
-        <select
-          id="role"
-          name="role"
-          defaultValue="eleve"
-          required
-          className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          {USER_ROLES.map((role) => (
-            <option key={role} value={role}>
-              {ROLE_LABELS[role]}
-            </option>
-          ))}
-        </select>
       </div>
 
       <button
