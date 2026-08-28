@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { isUserRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/types/database";
 
 /**
  * État renvoyé par une action d'authentification (connexion / inscription).
