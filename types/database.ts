@@ -50,6 +50,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       etablissement: {
         Row: {
@@ -94,6 +95,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       matiere: {
         Row: {
@@ -120,8 +122,9 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
-    classe: {
+      classe: {
         Row: {
           id: string;
           etablissement_id: string;
@@ -149,6 +152,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       trimestre: {
         Row: {
@@ -178,6 +182,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       professeur: {
         Row: {
@@ -207,6 +212,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       eleve: {
         Row: {
@@ -239,8 +245,9 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
-    liaison_eleve_etablissement: {
+      liaison_eleve_etablissement: {
         Row: {
           id: string;
           eleve_id: string;
@@ -271,6 +278,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       parent: {
         Row: {
@@ -297,6 +305,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       note: {
         Row: {
@@ -341,6 +350,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       maquette_pedagogique: {
         Row: {
@@ -376,8 +386,9 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
-    plan_etude: {
+      plan_etude: {
         Row: {
           id: string;
           eleve_id: string;
@@ -414,6 +425,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       ressource: {
         Row: {
@@ -446,6 +458,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       recommandation_ia: {
         Row: {
@@ -484,6 +497,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       emploi_du_temps: {
         Row: {
@@ -522,6 +536,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       notification: {
         Row: {
@@ -554,6 +569,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: {};
